@@ -2,7 +2,15 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Penny">
+  <meta name="application-name" content="Penny">
+  <meta name="theme-color" content="#000000">
+  <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0BAMAAADP4xsBAAAAElBMVEUdK1Mprf+rUjb/owD/7Cf/8eh1EmB3AAADaklEQVR4nOzbfW6bQBAF8BU36A3QxL0Am17A+AStev+rVLEZzDJv5wNw3do75A8LNj+9viI+oiS1afOq8+3wafTL0fzxiGl0o/8vuucPR9Id3Yf3HUIzytMfRS8T8/CxfTRrRHR2BffSU+TT5T4Tziu20p2A7ziv2UZDeMb7HfQVYK2cc9320F1dnmxeGaW7Shk8NdumLblq27TWxr2TfgPdmfLN5vUJcoiG8id/UG2LXhed5yl8VIlBd6XMrMRBbIMu6hjZnIePXCvpQ3RRB3s4uKxEpYs6WFPsAL2sg62qLSrR6GVolhR7HVujF6HZ0ex1bJ0+Vc+N5cTpjsgl54yvUgp9D81EbT6n0GXsOu0PnTO8UdbpObQtf9nTA0SfIFeh+du1+ZxCu+i5D0/onOenngS5gg6FznkgEbtGB0PnzDRBDtL8re7YkFt+5j68oXMWjdTpVR8/fsOJ07IPkxaNVGjZh0mL2AadLZo+xH+kToPzw0+T4EpanB82PTfionOI5tgqLfuI0P2aA/QYo7OD7jT65wTQd97zi9fwEZUWVbvo4ak06GNJV/eUZT+JzmF6sGhUdYimJ9JjnM4WTbvpvk5fHkznDfTwijQ892I06fS4hc5vSJdD12n0nV7e0RsdpeElxEsvLiJ/N7VBz484t683p68070LT6PehzTs62ow7uvc5RKH3PuL8m/S4gSaTPj2K7nbTyaAvcXp4Ig1PkQhtv5KOYZqeSaOyPXRR9RNo2YiHJptO+2jPj7UuMXrw0KDsAJ089Aj+uct3gHL4uEHLRkx6cNHgJ8F+upccokdA1IZ8NGxE39Z91Oj59PPHXodW6NOj6HAjog+b9sYmNz03cgmG7iFX0Bz7/AGp9cjQdZpjE3lkENqkz+JFCG4Uom+NgJcssBHoQ6Gvsc/aRUPWQb2P/ooN3w3FBkNr9OIX1nSbYGgnTb46/PTyF/jYUWVKXjqRwx6oElqnO9seqBZapxNZ9kDV0AZd2vI8IUW26I6U4EXkdR0mXcYu8BVMfZRexb59rVUY2qSxDYbXJ8hBOlUoqw4P7YvNq1OCHKZdNq8N0g6bV4bptKFoL522yE5a7YTXbKQVm1dsplMKlRGjYXA+tpNOKRA5SpfJed9B9AP/riCyNbrRIfrgrdGvRbdp82LzZwAw911UtsdQmQAAAABJRU5ErkJggg==">
+  <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0BAMAAADP4xsBAAAAElBMVEUdK1Mprf+rUjb/owD/7Cf/8eh1EmB3AAADaklEQVR4nOzbfW6bQBAF8BU36A3QxL0Am17A+AStev+rVLEZzDJv5wNw3do75A8LNj+9viI+oiS1afOq8+3wafTL0fzxiGl0o/8vuucPR9Id3Yf3HUIzytMfRS8T8/CxfTRrRHR2BffSU+TT5T4Tziu20p2A7ziv2UZDeMb7HfQVYK2cc9320F1dnmxeGaW7Shk8NdumLblq27TWxr2TfgPdmfLN5vUJcoiG8id/UG2LXhed5yl8VIlBd6XMrMRBbIMu6hjZnIePXCvpQ3RRB3s4uKxEpYs6WFPsAL2sg62qLSrR6GVolhR7HVujF6HZ0ex1bJ0+Vc+N5cTpjsgl54yvUgp9D81EbT6n0GXsOu0PnTO8UdbpObQtf9nTA0SfIFeh+du1+ZxCu+i5D0/onOenngS5gg6FznkgEbtGB0PnzDRBDtL8re7YkFt+5j68oXMWjdTpVR8/fsOJ07IPkxaNVGjZh0mL2AadLZo+xH+kToPzw0+T4EpanB82PTfionOI5tgqLfuI0P2aA/QYo7OD7jT65wTQd97zi9fwEZUWVbvo4ak06GNJV/eUZT+JzmF6sGhUdYimJ9JjnM4WTbvpvk5fHkznDfTwijQ892I06fS4hc5vSJdD12n0nV7e0RsdpeElxEsvLiJ/N7VBz484t683p68070LT6PehzTs62ow7uvc5RKH3PuL8m/S4gSaTPj2K7nbTyaAvcXp4Ig1PkQhtv5KOYZqeSaOyPXRR9RNo2YiHJptO+2jPj7UuMXrw0KDsAJ089Aj+uct3gHL4uEHLRkx6cNHgJ8F+upccokdA1IZ8NGxE39Z91Oj59PPHXodW6NOj6HAjog+b9sYmNz03cgmG7iFX0Bz7/AGp9cjQdZpjE3lkENqkz+JFCG4Uom+NgJcssBHoQ6Gvsc/aRUPWQb2P/ooN3w3FBkNr9OIX1nSbYGgnTb46/PTyF/jYUWVKXjqRwx6oElqnO9seqBZapxNZ9kDV0AZd2vI8IUW26I6U4EXkdR0mXcYu8BVMfZRexb59rVUY2qSxDYbXJ8hBOlUoqw4P7YvNq1OCHKZdNq8N0g6bV4bptKFoL522yE5a7YTXbKQVm1dsplMKlRGjYXA+tpNOKRA5SpfJed9B9AP/riCyNbrRIfrgrdGvRbdp82LzZwAw911UtsdQmQAAAABJRU5ErkJggg==">
   <title>Penny — 1980s Educational Home Computer</title>
   <style>
     :root {
@@ -15,15 +23,24 @@
       --green: #00e436;
       --red: #ff004d;
       --text: #f2f2f0;
+      --vp-w: 100dvw;
+      --vp-h: 100dvh;
     }
     * {
       box-sizing: border-box;
       user-select: none;
       -webkit-user-select: none;
+      -webkit-touch-callout: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    html,
+    body {
+      overscroll-behavior: none;
     }
     body {
       margin: 0;
       min-height: 100vh;
+      min-height: 100dvh;
       background: radial-gradient(circle at center, #1d2b53 0%, #0d101b 100%);
       color: var(--text);
       font-family: "Courier New", Courier, monospace;
@@ -34,14 +51,22 @@
       padding: 12px;
       gap: 12px;
     }
+    html.kid-lock,
+    html.fullscreen,
     body.kid-lock,
     body.fullscreen {
+      position: fixed;
+      inset: 0;
+      margin: 0;
       padding: 0;
       gap: 0;
       background: #000;
       overflow: hidden;
-      width: 100vw;
-      height: 100vh;
+      overscroll-behavior: none;
+      touch-action: none;
+      width: 100%;
+      height: 100%;
+      height: 100dvh;
     }
     body.kid-lock .crt-frame,
     body.fullscreen .crt-frame {
@@ -71,6 +96,8 @@
     body.fullscreen canvas#screen {
       width: min(100vw, calc(100vh * 4 / 3)) !important;
       height: min(100vh, calc(100vw * 3 / 4)) !important;
+      width: min(var(--vp-w, 100dvw), calc(var(--vp-h, 100dvh) * 4 / 3)) !important;
+      height: min(var(--vp-h, 100dvh), calc(var(--vp-w, 100dvw) * 3 / 4)) !important;
     }
     .crt-frame {
       position: relative;
@@ -330,8 +357,8 @@
     #unlock-pill {
       display: none;
       position: fixed;
-      top: 10px;
-      right: 10px;
+      top: calc(10px + env(safe-area-inset-top, 0px));
+      right: calc(10px + env(safe-area-inset-right, 0px));
       z-index: 30;
       background: rgba(21, 22, 30, 0.85);
       border: 1px solid #5f574f;
@@ -340,6 +367,7 @@
       padding: 6px 12px;
       font-size: 11px;
       cursor: pointer;
+      touch-action: none;
     }
     body.kid-lock #unlock-pill {
       display: block;
@@ -1104,7 +1132,15 @@ window.__PENNY_WASM_GZIP_B64__ = "H4sIAAAAAAAC/+z9CXwVVZY4jte9tb96K2sQlFsPlyAuQa
   let audioCtx = null;
   let nextAudioTime = 0;
   let bootJinglePlayed = false;
+  let activeModeName = "IMMEDIATE";
   const audioPullBuf = new Float32Array(4096);
+
+  // Detect iOS / iPadOS WebKit (including iPadOS desktop-class UA reporting MacIntel with multi-touch).
+  // On iPadOS WebKit, calling Element.requestFullscreen() enables an un-disableable anti-phishing
+  // heuristic that displays a "typing in full screen" warning dialog during rapid game taps.
+  const isIOSWebKit =
+    /iPad|iPhone|iPod/.test(navigator.userAgent || "") ||
+    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 
   function ensureAudio() {
     if (!audioCtx) {
@@ -1122,13 +1158,15 @@ window.__PENNY_WASM_GZIP_B64__ = "H4sIAAAAAAAC/+z9CXwVVZY4jte9tb96K2sQlFsPlyAuQa
       audioCtx.resume().then(() => {
         if (!bootJinglePlayed && audioCtx.state === "running") {
           bootJinglePlayed = true;
-          if (window.PennyWasm && window.PennyWasm.playStartupJingle) {
+          if (activeModeName === "IMMEDIATE" && window.PennyWasm && window.PennyWasm.playStartupJingle) {
             window.PennyWasm.playStartupJingle();
           }
         }
       }).catch(() => {});
     }
   }
+  window.addEventListener("touchstart", ensureAudio, { passive: true });
+  window.addEventListener("touchend", ensureAudio, { passive: true });
 
   function pumpWebAudio() {
     if (!audioCtx || audioCtx.state !== "running" || !window.PennyWasm.drainAudio) return;
@@ -1178,14 +1216,60 @@ window.__PENNY_WASM_GZIP_B64__ = "H4sIAAAAAAAC/+z9CXwVVZY4jte9tb96K2sQlFsPlyAuQa
     let currentMode = "IMMEDIATE";
     let prevMode = "IMMEDIATE";
     let userFullscreen = false;
+    const KIDLOCK_STORAGE_KEY = "penny.kidlockRom";
+
+    function syncViewportMetrics() {
+      const vv = window.visualViewport;
+      const vw = vv && vv.width > 0 ? vv.width : window.innerWidth;
+      const vh = vv && vv.height > 0 ? vv.height : window.innerHeight;
+      const offsetTop = vv ? vv.offsetTop : 0;
+      const offsetLeft = vv ? vv.offsetLeft : 0;
+      if (vw > 0 && vh > 0) {
+        document.documentElement.style.setProperty("--vp-w", vw + "px");
+        document.documentElement.style.setProperty("--vp-h", vh + "px");
+      }
+      const locked =
+        document.body.classList.contains("kid-lock") ||
+        document.body.classList.contains("fullscreen");
+      if (locked && vw > 0 && vh > 0) {
+        document.body.style.top = offsetTop + "px";
+        document.body.style.left = offsetLeft + "px";
+        document.body.style.width = vw + "px";
+        document.body.style.height = vh + "px";
+        if (window.scrollX !== 0 || window.scrollY !== 0) {
+          window.scrollTo(0, 0);
+        }
+      } else {
+        document.body.style.top = "";
+        document.body.style.left = "";
+        document.body.style.width = "";
+        document.body.style.height = "";
+      }
+    }
+
+    window.addEventListener("resize", syncViewportMetrics);
+    window.addEventListener("orientationchange", syncViewportMetrics);
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener("resize", syncViewportMetrics);
+      window.visualViewport.addEventListener("scroll", syncViewportMetrics);
+    }
+
+    function setKidLockDOMClasses(on) {
+      document.documentElement.classList.toggle("kid-lock", on);
+      document.body.classList.toggle("kid-lock", on);
+    }
 
     function applyFullscreenState(on, fromGesture) {
+      document.documentElement.classList.toggle("fullscreen", on);
       document.body.classList.toggle("fullscreen", on);
       if (fullscreenBtn) {
         fullscreenBtn.classList.toggle("active", on);
       }
+      syncViewportMetrics();
       if (on) {
-        if (fromGesture && !document.fullscreenElement && document.documentElement.requestFullscreen) {
+        // Skip HTML5 requestFullscreen() on iPadOS/iOS WebKit so rapid game taps never trigger
+        // WebKit's "typing in full screen" anti-phishing modal and toolbar reflows.
+        if (!isIOSWebKit && fromGesture && !document.fullscreenElement && document.documentElement.requestFullscreen) {
           document.documentElement.requestFullscreen().catch(() => {});
         }
       } else if (document.fullscreenElement && document.exitFullscreen) {
@@ -1198,7 +1282,89 @@ window.__PENNY_WASM_GZIP_B64__ = "H4sIAAAAAAAC/+z9CXwVVZY4jte9tb96K2sQlFsPlyAuQa
         userFullscreen = false;
         applyFullscreenState(false, false);
       }
+      syncViewportMetrics();
     });
+
+    function saveKidLockRom(romName) {
+      try {
+        if (romName) {
+          window.localStorage.setItem(KIDLOCK_STORAGE_KEY, romName);
+        } else {
+          window.localStorage.removeItem(KIDLOCK_STORAGE_KEY);
+        }
+      } catch (_) {}
+    }
+
+    function parseParamMap(raw) {
+      const out = {};
+      if (!raw) return out;
+      const trimmed = raw.replace(/^[?#]/, "");
+      if (!trimmed) return out;
+      trimmed.split("&").forEach((part) => {
+        if (!part) return;
+        const eq = part.indexOf("=");
+        if (eq < 0) {
+          out[decodeURIComponent(part).toLowerCase()] = "1";
+        } else {
+          const k = decodeURIComponent(part.slice(0, eq)).toLowerCase();
+          const v = decodeURIComponent(part.slice(eq + 1));
+          out[k] = v;
+        }
+      });
+      return out;
+    }
+
+    function resolveInitialKidLockRom() {
+      const q = parseParamMap(window.location.search);
+      const h = parseParamMap(window.location.hash);
+      if (q.unlock === "1" || q.unlock === "true" || h.unlock === "1" || h.unlock === "true" || q.kidlock === "0" || h.kidlock === "0") {
+        saveKidLockRom("");
+        return "";
+      }
+      const rawParam = h.kidlock !== undefined ? h.kidlock : q.kidlock;
+      if (rawParam !== undefined) {
+        const cleaned = String(rawParam).trim().toUpperCase();
+        if (!cleaned || cleaned === "1" || cleaned === "TRUE" || cleaned === "YES") {
+          return "PENNY_CANDY_TOYS";
+        }
+        return cleaned;
+      }
+      try {
+        const stored = window.localStorage.getItem(KIDLOCK_STORAGE_KEY);
+        if (stored) {
+          return stored.trim().toUpperCase();
+        }
+      } catch (_) {}
+      return "";
+    }
+
+    function enterKidLock(romName, fromGesture) {
+      const targetRom = (romName || cartSelect.value || "PENNY_CANDY_TOYS").trim().toUpperCase();
+      const st = window.PennyWasm.startKidLock(targetRom);
+      if (st && st.mode === "KID_LOCK") {
+        currentMode = "KID_LOCK";
+        activeModeName = "KID_LOCK";
+        setKidLockDOMClasses(true);
+        saveKidLockRom(targetRom);
+        applyFullscreenState(true, fromGesture);
+      }
+    }
+
+    function exitKidLock() {
+      saveKidLockRom("");
+      try {
+        if (window.history && window.history.replaceState && (window.location.search.includes("kidlock") || window.location.hash.includes("kidlock"))) {
+          const cleanUrl = window.location.pathname;
+          window.history.replaceState(null, "", cleanUrl);
+        }
+      } catch (_) {}
+      window.PennyWasm.unlockKidLock();
+      currentMode = "IMMEDIATE";
+      activeModeName = "IMMEDIATE";
+      userFullscreen = false;
+      setKidLockDOMClasses(false);
+      applyFullscreenState(false, false);
+    }
 
     function canvasCoords(evt) {
       const rect = canvas.getBoundingClientRect();
@@ -1227,6 +1393,7 @@ window.__PENNY_WASM_GZIP_B64__ = "H4sIAAAAAAAC/+z9CXwVVZY4jte9tb96K2sQlFsPlyAuQa
     }
 
     canvas.addEventListener("pointerdown", (e) => {
+      if (e.cancelable) e.preventDefault();
       ensureAudio();
       if (document.activeElement && document.activeElement !== document.body) {
         document.activeElement.blur();
@@ -1248,14 +1415,36 @@ window.__PENNY_WASM_GZIP_B64__ = "H4sIAAAAAAAC/+z9CXwVVZY4jte9tb96K2sQlFsPlyAuQa
     });
     canvas.addEventListener("pointermove", (e) => {
       if (editorDragActive && currentMode === "EDITOR") {
+        if (e.cancelable) e.preventDefault();
         editorDragAccumY = scrollEditorByPx(editorDragLastY - e.clientY, editorDragAccumY);
         editorDragLastY = e.clientY;
         return;
       }
       if (!touchDown) return;
+      if (e.cancelable) e.preventDefault();
       const pt = canvasCoords(e);
       touchX = pt.x;
       touchY = pt.y;
+    });
+    // Suppress native WKScrollView pan/rubber-band/toolbar-reveal and pinch-zoom gestures on iPadOS.
+    canvas.addEventListener("touchstart", (e) => {
+      if (e.cancelable) e.preventDefault();
+    }, { passive: false });
+    canvas.addEventListener("touchmove", (e) => {
+      if (e.cancelable) e.preventDefault();
+    }, { passive: false });
+    canvas.addEventListener("contextmenu", (e) => e.preventDefault());
+    document.addEventListener("touchmove", (e) => {
+      if (document.body.classList.contains("kid-lock") || document.body.classList.contains("fullscreen")) {
+        if (e.cancelable) e.preventDefault();
+      }
+    }, { passive: false });
+    ["gesturestart", "gesturechange", "gestureend"].forEach((evtName) => {
+      document.addEventListener(evtName, (e) => {
+        if (e.target === canvas || document.body.classList.contains("kid-lock") || document.body.classList.contains("fullscreen")) {
+          e.preventDefault();
+        }
+      }, { passive: false });
     });
     window.addEventListener("pointerup", () => {
       touchDown = false;
@@ -1335,6 +1524,8 @@ window.__PENNY_WASM_GZIP_B64__ = "H4sIAAAAAAAC/+z9CXwVVZY4jte9tb96K2sQlFsPlyAuQa
       const st = window.PennyWasm.sendKey(keyToSend);
       if (st && st.mode === "KID_LOCK") {
         currentMode = "KID_LOCK";
+        activeModeName = "KID_LOCK";
+        setKidLockDOMClasses(true);
         applyFullscreenState(true, true);
       }
     }
@@ -1422,6 +1613,7 @@ window.__PENNY_WASM_GZIP_B64__ = "H4sIAAAAAAAC/+z9CXwVVZY4jte9tb96K2sQlFsPlyAuQa
         const st = window.PennyWasm.tick(dt, touchDown, touchX, touchY, padMask);
         if (st) {
           currentMode = st.mode;
+          activeModeName = st.mode;
           if (st.width !== curW || st.height !== curH) {
             curW = st.width;
             curH = st.height;
@@ -1432,7 +1624,7 @@ window.__PENNY_WASM_GZIP_B64__ = "H4sIAAAAAAAC/+z9CXwVVZY4jte9tb96K2sQlFsPlyAuQa
           }
           modeBadge.textContent = "PENNY // " + st.mode + " (" + curW + "x" + curH + ")";
           profileBadge.textContent = "PROFILE: " + st.profile;
-          document.body.classList.toggle("kid-lock", st.mode === "KID_LOCK");
+          setKidLockDOMClasses(st.mode === "KID_LOCK");
           document.body.classList.toggle("touch-only", st.profile === "TOUCH_ONLY");
           if (st.mode === "KID_LOCK") {
             if (!document.body.classList.contains("fullscreen")) {
@@ -1708,30 +1900,40 @@ window.__PENNY_WASM_GZIP_B64__ = "H4sIAAAAAAAC/+z9CXwVVZY4jte9tb96K2sQlFsPlyAuQa
     bindControlBtn(auxBtn, () => window.PennyWasm.openAuxEditor());
     bindControlBtn(breakBtn, () => window.PennyWasm.breakProgram());
     bindControlBtn(lockBtn, () => {
-      const st = window.PennyWasm.startKidLock(cartSelect.value);
-      if (st && st.mode === "KID_LOCK") {
-        currentMode = "KID_LOCK";
-        applyFullscreenState(true, true);
-      }
+      enterKidLock(cartSelect.value, true);
     });
     bindControlBtn(resetBtn, () => window.PennyWasm.resetBootScreen());
 
     // Parent 2-second hold unlock for Kid-Lock Mode.
     let unlockTimer = null;
-    unlockPill.addEventListener("pointerdown", () => {
-      unlockTimer = setTimeout(() => {
-        window.PennyWasm.unlockKidLock();
-        currentMode = "IMMEDIATE";
-        userFullscreen = false;
-        applyFullscreenState(false, false);
-      }, 1500);
-    });
-    window.addEventListener("pointerup", () => {
+    function cancelUnlockHold() {
       if (unlockTimer) {
         clearTimeout(unlockTimer);
         unlockTimer = null;
       }
+    }
+    unlockPill.addEventListener("pointerdown", (e) => {
+      if (e.cancelable) e.preventDefault();
+      cancelUnlockHold();
+      unlockTimer = setTimeout(() => {
+        unlockTimer = null;
+        exitKidLock();
+      }, 1800);
     });
+    unlockPill.addEventListener("touchstart", (e) => {
+      if (e.cancelable) e.preventDefault();
+    }, { passive: false });
+    unlockPill.addEventListener("contextmenu", (e) => e.preventDefault());
+    window.addEventListener("pointerup", cancelUnlockHold);
+    window.addEventListener("pointercancel", cancelUnlockHold);
+    window.addEventListener("touchend", cancelUnlockHold, { passive: true });
+    window.addEventListener("touchcancel", cancelUnlockHold, { passive: true });
+
+    syncViewportMetrics();
+    const initialKidLockRom = resolveInitialKidLockRom();
+    if (initialKidLockRom) {
+      enterKidLock(initialKidLockRom, false);
+    }
   } catch (err) {
     statusText.textContent = "WASM ERROR: " + err.message;
     console.error(err);

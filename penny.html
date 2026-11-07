@@ -25,6 +25,8 @@
       --text: #f2f2f0;
       --vp-w: 100dvw;
       --vp-h: 100dvh;
+      --vp-top: 0px;
+      --vp-left: 0px;
     }
     * {
       box-sizing: border-box;
@@ -56,7 +58,12 @@
     body.kid-lock,
     body.fullscreen {
       position: fixed;
-      inset: 0;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      min-height: 0 !important;
+      max-height: 100% !important;
       margin: 0;
       padding: 0;
       gap: 0;
@@ -64,23 +71,34 @@
       overflow: hidden;
       overscroll-behavior: none;
       touch-action: none;
-      width: 100%;
-      height: 100%;
-      height: 100dvh;
     }
     body.kid-lock .crt-frame,
     body.fullscreen .crt-frame {
+      position: fixed;
+      top: var(--vp-top, 0px);
+      left: var(--vp-left, 0px);
+      width: var(--vp-w, 100%);
+      height: var(--vp-h, 100%);
       background: transparent;
       border: none;
       border-radius: 0;
       padding: 0;
       box-shadow: none;
       gap: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
     }
     body.kid-lock .crt-screen-wrap,
     body.fullscreen .crt-screen-wrap {
       border: none;
       border-radius: 0;
+      max-width: 100%;
+      max-height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     body.kid-lock .bezel-footer,
     body.kid-lock .controls,
@@ -357,7 +375,7 @@
     #unlock-pill {
       display: none;
       position: fixed;
-      top: calc(10px + env(safe-area-inset-top, 0px));
+      top: calc(10px + var(--vp-top, 0px) + env(safe-area-inset-top, 0px));
       right: calc(10px + env(safe-area-inset-right, 0px));
       z-index: 30;
       background: rgba(21, 22, 30, 0.85);
@@ -1135,11 +1153,11 @@ window.__PENNY_WASM_GZIP_B64__ = "H4sIAAAAAAAC/+z9CXwVVZY4jte9tb96K2sQlFsPlyAuQa
   let activeModeName = "IMMEDIATE";
   const audioPullBuf = new Float32Array(4096);
 
-  // Detect iOS / iPadOS WebKit (including iPadOS desktop-class UA reporting MacIntel with multi-touch).
+  // Detect iOS / iPadOS WebKit (including Chrome CriOS and iPadOS desktop-class UA reporting MacIntel with multi-touch).
   // On iPadOS WebKit, calling Element.requestFullscreen() enables an un-disableable anti-phishing
   // heuristic that displays a "typing in full screen" warning dialog during rapid game taps.
   const isIOSWebKit =
-    /iPad|iPhone|iPod/.test(navigator.userAgent || "") ||
+    /iPad|iPhone|iPod|CriOS|FxiOS|EdgiOS/.test(navigator.userAgent || "") ||
     (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 
   function ensureAudio() {
@@ -1216,36 +1234,103 @@ window.__PENNY_WASM_GZIP_B64__ = "H4sIAAAAAAAC/+z9CXwVVZY4jte9tb96K2sQlFsPlyAuQa
     let currentMode = "IMMEDIATE";
     let prevMode = "IMMEDIATE";
     let userFullscreen = false;
+    let lastVpW = 0;
+    let lastVpH = 0;
+    let lastVpTop = -1;
+    let lastVpLeft = -1;
+    let kidLockHistoryDepth = 0;
+    let kidLockGestureArmed = false;
     const KIDLOCK_STORAGE_KEY = "penny.kidlockRom";
+
+    function positiveMin() {
+      let best = 0;
+      for (let i = 0; i < arguments.length; i++) {
+        const v = arguments[i];
+        if (typeof v === "number" && v > 0 && (best === 0 || v < best)) {
+          best = v;
+        }
+      }
+      return best;
+    }
+
+    function isViewportLocked() {
+      return (
+        currentMode === "KID_LOCK" ||
+        document.body.classList.contains("kid-lock") ||
+        document.body.classList.contains("fullscreen")
+      );
+    }
 
     function syncViewportMetrics() {
       const vv = window.visualViewport;
-      const vw = vv && vv.width > 0 ? vv.width : window.innerWidth;
-      const vh = vv && vv.height > 0 ? vv.height : window.innerHeight;
-      const offsetTop = vv ? vv.offsetTop : 0;
-      const offsetLeft = vv ? vv.offsetLeft : 0;
-      if (vw > 0 && vh > 0) {
-        document.documentElement.style.setProperty("--vp-w", vw + "px");
-        document.documentElement.style.setProperty("--vp-h", vh + "px");
+      const offsetTop = vv && vv.offsetTop > 0 ? Math.round(vv.offsetTop) : 0;
+      const offsetLeft = vv && vv.offsetLeft > 0 ? Math.round(vv.offsetLeft) : 0;
+      const bodyW = document.body ? document.body.clientWidth : 0;
+      const bodyH = document.body ? document.body.clientHeight : 0;
+      const docW = document.documentElement ? document.documentElement.clientWidth : 0;
+      const docH = document.documentElement ? document.documentElement.clientHeight : 0;
+      const winW = window.innerWidth || 0;
+      const winH = window.innerHeight || 0;
+      const vvW = vv && vv.width > 0 ? vv.width : 0;
+      const vvH = vv && vv.height > 0 ? vv.height : 0;
+
+      const vw = Math.floor(positiveMin(bodyW - offsetLeft, docW - offsetLeft, winW - offsetLeft, vvW));
+      const vh = Math.floor(positiveMin(bodyH - offsetTop, docH - offsetTop, winH - offsetTop, vvH));
+      if (vw > 0 && vh > 0 && (vw !== lastVpW || vh !== lastVpH || offsetTop !== lastVpTop || offsetLeft !== lastVpLeft)) {
+        lastVpW = vw;
+        lastVpH = vh;
+        lastVpTop = offsetTop;
+        lastVpLeft = offsetLeft;
+        const rootStyle = document.documentElement.style;
+        rootStyle.setProperty("--vp-w", vw + "px");
+        rootStyle.setProperty("--vp-h", vh + "px");
+        rootStyle.setProperty("--vp-top", offsetTop + "px");
+        rootStyle.setProperty("--vp-left", offsetLeft + "px");
       }
-      const locked =
-        document.body.classList.contains("kid-lock") ||
-        document.body.classList.contains("fullscreen");
-      if (locked && vw > 0 && vh > 0) {
-        document.body.style.top = offsetTop + "px";
-        document.body.style.left = offsetLeft + "px";
-        document.body.style.width = vw + "px";
-        document.body.style.height = vh + "px";
-        if (window.scrollX !== 0 || window.scrollY !== 0) {
-          window.scrollTo(0, 0);
-        }
-      } else {
-        document.body.style.top = "";
-        document.body.style.left = "";
-        document.body.style.width = "";
-        document.body.style.height = "";
+      if (isViewportLocked() && (window.scrollX !== 0 || window.scrollY !== 0)) {
+        window.scrollTo(0, 0);
       }
     }
+
+    function pushKidLockHistoryGuards() {
+      try {
+        if (!window.history || !window.history.pushState) return;
+        while (kidLockHistoryDepth < 2) {
+          window.history.pushState({ pennyKidLockGuard: kidLockHistoryDepth + 1 }, "", window.location.href);
+          kidLockHistoryDepth++;
+        }
+      } catch (_) {}
+    }
+
+    function armKidLockHistoryGuardFromGesture() {
+      if (currentMode !== "KID_LOCK") return;
+      if (!kidLockGestureArmed || kidLockHistoryDepth < 2) {
+        try {
+          if (window.history && window.history.pushState) {
+            window.history.pushState({ pennyKidLockGuard: Date.now() }, "", window.location.href);
+            kidLockHistoryDepth++;
+            kidLockGestureArmed = true;
+          }
+        } catch (_) {}
+      }
+    }
+
+    window.addEventListener("popstate", () => {
+      if (currentMode === "KID_LOCK") {
+        if (kidLockHistoryDepth > 0) {
+          kidLockHistoryDepth--;
+        }
+        kidLockGestureArmed = false;
+        pushKidLockHistoryGuards();
+      }
+    });
+
+    window.addEventListener("beforeunload", (e) => {
+      if (currentMode === "KID_LOCK") {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    });
 
     window.addEventListener("resize", syncViewportMetrics);
     window.addEventListener("orientationchange", syncViewportMetrics);
@@ -1346,11 +1431,19 @@ window.__PENNY_WASM_GZIP_B64__ = "H4sIAAAAAAAC/+z9CXwVVZY4jte9tb96K2sQlFsPlyAuQa
         activeModeName = "KID_LOCK";
         setKidLockDOMClasses(true);
         saveKidLockRom(targetRom);
+        pushKidLockHistoryGuards();
+        if (fromGesture) {
+          armKidLockHistoryGuardFromGesture();
+        }
         applyFullscreenState(true, fromGesture);
       }
     }
 
     function exitKidLock() {
+      currentMode = "IMMEDIATE";
+      activeModeName = "IMMEDIATE";
+      kidLockHistoryDepth = 0;
+      kidLockGestureArmed = false;
       saveKidLockRom("");
       try {
         if (window.history && window.history.replaceState && (window.location.search.includes("kidlock") || window.location.hash.includes("kidlock"))) {
@@ -1359,8 +1452,6 @@ window.__PENNY_WASM_GZIP_B64__ = "H4sIAAAAAAAC/+z9CXwVVZY4jte9tb96K2sQlFsPlyAuQa
         }
       } catch (_) {}
       window.PennyWasm.unlockKidLock();
-      currentMode = "IMMEDIATE";
-      activeModeName = "IMMEDIATE";
       userFullscreen = false;
       setKidLockDOMClasses(false);
       applyFullscreenState(false, false);
@@ -1392,9 +1483,26 @@ window.__PENNY_WASM_GZIP_B64__ = "H4sIAAAAAAAC/+z9CXwVVZY4jte9tb96K2sQlFsPlyAuQa
       return nextAccum - rows * rowPx;
     }
 
+    // Parent 2-second hold unlock helper (shared by pointer and touch capture handlers).
+    let unlockTimer = null;
+    function startUnlockHold() {
+      if (unlockTimer) return;
+      unlockTimer = setTimeout(() => {
+        unlockTimer = null;
+        exitKidLock();
+      }, 1800);
+    }
+    function cancelUnlockHold() {
+      if (unlockTimer) {
+        clearTimeout(unlockTimer);
+        unlockTimer = null;
+      }
+    }
+
     canvas.addEventListener("pointerdown", (e) => {
       if (e.cancelable) e.preventDefault();
       ensureAudio();
+      armKidLockHistoryGuardFromGesture();
       if (document.activeElement && document.activeElement !== document.body) {
         document.activeElement.blur();
       }
@@ -1426,25 +1534,59 @@ window.__PENNY_WASM_GZIP_B64__ = "H4sIAAAAAAAC/+z9CXwVVZY4jte9tb96K2sQlFsPlyAuQa
       touchX = pt.x;
       touchY = pt.y;
     });
-    // Suppress native WKScrollView pan/rubber-band/toolbar-reveal and pinch-zoom gestures on iPadOS.
-    canvas.addEventListener("touchstart", (e) => {
-      if (e.cancelable) e.preventDefault();
-    }, { passive: false });
-    canvas.addEventListener("touchmove", (e) => {
-      if (e.cancelable) e.preventDefault();
-    }, { passive: false });
     canvas.addEventListener("contextmenu", (e) => e.preventDefault());
-    document.addEventListener("touchmove", (e) => {
-      if (document.body.classList.contains("kid-lock") || document.body.classList.contains("fullscreen")) {
+
+    // Capture-phase window touch handlers: in Kid-Lock / Fullscreen, cancel touchstart AND touchmove
+    // across the entire screen (including letterbox/pillarbox margins and screen edges) so WebKit
+    // cannot initiate left-edge Back swipes or top-edge toolbar pull-downs.
+    window.addEventListener("touchstart", (e) => {
+      ensureAudio();
+      armKidLockHistoryGuardFromGesture();
+      if (unlockPill && (e.target === unlockPill || unlockPill.contains(e.target))) {
         if (e.cancelable) e.preventDefault();
+        startUnlockHold();
+        return;
       }
-    }, { passive: false });
+      if (isViewportLocked() || e.target === canvas) {
+        if (e.cancelable) e.preventDefault();
+        if (e.touches && e.touches.length > 0 && currentMode !== "EDITOR" && currentMode !== "AUX_EDITOR") {
+          const t = e.touches[0];
+          const rect = canvas.getBoundingClientRect();
+          if (e.target === canvas || (t.clientX >= rect.left && t.clientX <= rect.right && t.clientY >= rect.top && t.clientY <= rect.bottom)) {
+            const pt = canvasCoords(t);
+            touchDown = true;
+            touchX = pt.x;
+            touchY = pt.y;
+          }
+        }
+        return;
+      }
+      // Outside Kid-Lock, still block single-finger left/right edge-swipe Back/Forward navigation.
+      if (e.touches && e.touches.length === 1) {
+        const tx = e.touches[0].clientX;
+        if (tx < 28 || tx > (window.innerWidth - 28)) {
+          if (e.cancelable) e.preventDefault();
+        }
+      }
+    }, { passive: false, capture: true });
+
+    window.addEventListener("touchmove", (e) => {
+      if (isViewportLocked() || e.target === canvas) {
+        if (e.cancelable) e.preventDefault();
+        if (touchDown && e.touches && e.touches.length > 0 && currentMode !== "EDITOR" && currentMode !== "AUX_EDITOR") {
+          const pt = canvasCoords(e.touches[0]);
+          touchX = pt.x;
+          touchY = pt.y;
+        }
+      }
+    }, { passive: false, capture: true });
+
     ["gesturestart", "gesturechange", "gestureend"].forEach((evtName) => {
-      document.addEventListener(evtName, (e) => {
-        if (e.target === canvas || document.body.classList.contains("kid-lock") || document.body.classList.contains("fullscreen")) {
+      window.addEventListener(evtName, (e) => {
+        if (e.target === canvas || isViewportLocked()) {
           e.preventDefault();
         }
-      }, { passive: false });
+      }, { passive: false, capture: true });
     });
     window.addEventListener("pointerup", () => {
       touchDown = false;
@@ -1609,6 +1751,9 @@ window.__PENNY_WASM_GZIP_B64__ = "H4sIAAAAAAAC/+z9CXwVVZY4jte9tb96K2sQlFsPlyAuQa
     function renderLoop(now) {
       const dt = Math.min(0.05, Math.max(0.001, (now - lastTime) / 1000));
       lastTime = now;
+      if (isViewportLocked()) {
+        syncViewportMetrics();
+      }
       if (window.PennyWasm.tick) {
         const st = window.PennyWasm.tick(dt, touchDown, touchX, touchY, padMask);
         if (st) {
@@ -1904,30 +2049,23 @@ window.__PENNY_WASM_GZIP_B64__ = "H4sIAAAAAAAC/+z9CXwVVZY4jte9tb96K2sQlFsPlyAuQa
     });
     bindControlBtn(resetBtn, () => window.PennyWasm.resetBootScreen());
 
-    // Parent 2-second hold unlock for Kid-Lock Mode.
-    let unlockTimer = null;
-    function cancelUnlockHold() {
-      if (unlockTimer) {
-        clearTimeout(unlockTimer);
-        unlockTimer = null;
-      }
-    }
+    // Parent 2-second hold unlock bindings for Kid-Lock Mode.
     unlockPill.addEventListener("pointerdown", (e) => {
       if (e.cancelable) e.preventDefault();
-      cancelUnlockHold();
-      unlockTimer = setTimeout(() => {
-        unlockTimer = null;
-        exitKidLock();
-      }, 1800);
+      startUnlockHold();
     });
-    unlockPill.addEventListener("touchstart", (e) => {
-      if (e.cancelable) e.preventDefault();
-    }, { passive: false });
     unlockPill.addEventListener("contextmenu", (e) => e.preventDefault());
-    window.addEventListener("pointerup", cancelUnlockHold);
-    window.addEventListener("pointercancel", cancelUnlockHold);
-    window.addEventListener("touchend", cancelUnlockHold, { passive: true });
-    window.addEventListener("touchcancel", cancelUnlockHold, { passive: true });
+    const clearTouchAndHold = (e) => {
+      cancelUnlockHold();
+      if (!e || !e.touches || e.touches.length === 0) {
+        touchDown = false;
+        editorDragActive = false;
+      }
+    };
+    window.addEventListener("pointerup", clearTouchAndHold);
+    window.addEventListener("pointercancel", clearTouchAndHold);
+    window.addEventListener("touchend", clearTouchAndHold, { passive: true });
+    window.addEventListener("touchcancel", clearTouchAndHold, { passive: true });
 
     syncViewportMetrics();
     const initialKidLockRom = resolveInitialKidLockRom();
